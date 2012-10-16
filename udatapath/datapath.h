@@ -143,6 +143,9 @@ struct datapath {
     of_hw_driver_t *hw_drv;
     struct hw_pkt_q_entry *hw_pkt_list_head, *hw_pkt_list_tail;
 #endif
+
+    /* Key */
+    uint32_t key;
 };
 
 int dp_new(struct datapath **, uint64_t dpid);

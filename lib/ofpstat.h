@@ -95,6 +95,7 @@ struct ofpstat {
 	uint64_t ofps_stats_reply;
 	uint64_t ofps_barrier_request;
 	uint64_t ofps_barrier_reply;
+	uint64_t ofps_key_mod;
 };
 
 void ofpstat_inc_protocol_stat(struct ofpstat *, struct ofp_header *);

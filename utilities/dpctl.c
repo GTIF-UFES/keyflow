@@ -225,6 +225,8 @@ usage(void)
            "  get-idx OF_DEV              get datapath index for OF_DEV\n"
 #endif
            "\nFor local datapaths and remote switches:\n"
+           "  dump-key SWITCH             print switch key\n"
+           "  key-mod SWITCH KEY          modify switch key\n"
            "  show SWITCH                 show basic information\n"
            "  status SWITCH [KEY]         report statistics (about KEY)\n"
            "  show-protostat SWITCH       report protocol statistics\n"
@@ -724,6 +726,33 @@ static void
 do_dump_desc(const struct settings *s UNUSED, int argc UNUSED, char *argv[])
 {
     dump_trivial_stats_transaction(argv[1], OFPST_DESC);
+}
+
+static void
+do_dump_key(const struct settings *s UNUSED, int argc UNUSED, char *argv[])
+{
+    dump_trivial_stats_transaction(argv[1], OFPST_KEY);
+}
+
+static void
+do_mod_key(const struct settings *s UNUSED, int argc UNUSED, char *argv[])
+{
+    struct vconn *vconn;
+    struct ofpbuf *buffer;
+    struct ofp_key_mod *ofm;
+
+    buffer = ofpbuf_new(sizeof(*ofm));
+    ofpbuf_put_uninit(buffer, sizeof(*ofm));
+
+    ofm = ofpbuf_at_assert(buffer, 0, sizeof(*ofm));
+    ofm->header.version = OFP_VERSION;
+    ofm->header.type = OFPT_KEY_MOD;
+    ofm->header.length = htons(sizeof(*ofm));
+    ofm->key = atoi(argv[2]);
+
+    open_vconn(argv[1], &vconn);
+    send_openflow_buffer(vconn, buffer);
+    vconn_close(vconn);
 }
 
 static void
@@ -1768,5 +1797,9 @@ static struct command all_commands[] = {
     { "probe", 1, 1, do_probe },
     { "ping", 1, 2, do_ping },
     { "benchmark", 3, 3, do_benchmark },
+
+    { "dump-key", 1, 1, do_dump_key },
+    { "key-mod", 2, 2, do_mod_key },
+
     { NULL, 0, 0, NULL },
 };

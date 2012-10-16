@@ -824,6 +824,15 @@ ofp_print_port_mod(struct ds *string, const void *oh, size_t len UNUSED,
     }
 }
 
+static void
+ofp_print_key_mod(struct ds *string, const void *oh, size_t len UNUSED,
+                  int verbosity UNUSED)
+{
+    const struct ofp_key_mod *opm = oh;
+
+    ds_put_format(string, "Key: %lu\n", opm->key);
+}
+
 struct error_type {
     int type;
     int code;
@@ -950,6 +959,15 @@ ofp_desc_stats_reply(struct ds *string, const void *body, size_t len UNUSED,
     ds_put_format(string, "Software: %s\n", ods->sw_desc);
     ds_put_format(string, "Comment: %s\n", ods->dp_desc);
     ds_put_format(string, "Serial Num: %s\n", ods->serial_num);
+}
+
+static void
+ofp_key_stats_reply(struct ds *string, const void *body, size_t len UNUSED,
+                    int verbosity UNUSED)
+{
+    const struct ofp_key *ods = body;
+
+    ds_put_format(string, "Key: %lu\n", ods->key);
 }
 
 static void
@@ -1239,6 +1257,12 @@ print_stats(struct ds *string, int type, const void *body, size_t body_len,
             { sizeof(uint32_t), SIZE_MAX, vendor_stat },
         },
         {
+            OFPST_KEY,
+            "key",
+            { 0, 0, NULL },
+            { 0, SIZE_MAX, ofp_key_stats_reply },
+        },
+        {
             -1,
             "unknown",
             { 0, 0, NULL, },
@@ -1519,6 +1543,12 @@ static const struct openflow_packet packets[] = {
         "queue_config_reply",
         sizeof (struct ofp_queue_get_config_reply),
         show_queue_get_config_reply,
+    },
+    {
+        OFPT_KEY_MOD,
+        "key_mod",
+        sizeof (struct ofp_key_mod),
+        ofp_print_key_mod,
     }
 };
 

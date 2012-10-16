@@ -133,8 +133,10 @@ enum ofp_type {
 
     /* Queue Configuration messages. */
     OFPT_QUEUE_GET_CONFIG_REQUEST,  /* Controller/switch message */
-    OFPT_QUEUE_GET_CONFIG_REPLY     /* Controller/switch message */
+    OFPT_QUEUE_GET_CONFIG_REPLY,    /* Controller/switch message */
 
+    /* Key messages. */
+    OFPT_KEY_MOD              /* Controller/switch message */
 };
 
 /* Header on all OpenFlow packets. */
@@ -701,6 +703,11 @@ enum ofp_stats_types {
      * The reply body is struct ofp_desc_stats. */
     OFPST_DESC,
 
+    /* Switch Key
+     * The request body is empty.
+     * The reply body is struct ofp_key. */
+    OFPST_KEY,
+
     /* Individual flow statistics.
      * The request body is struct ofp_flow_stats_request.
      * The reply body is an array of struct ofp_flow_stats. */
@@ -966,5 +973,16 @@ struct ofp_queue_stats {
     uint64_t tx_errors;      /* Number of packets dropped due to overrun. */
 };
 OFP_ASSERT(sizeof(struct ofp_queue_stats) == 32);
+
+struct ofp_key {
+	uint32_t key;
+};
+OFP_ASSERT(sizeof(struct ofp_key) == 4);
+
+struct ofp_key_mod {
+	struct ofp_header header;
+	uint32_t key;
+};
+OFP_ASSERT(sizeof(struct ofp_key_mod) == 12);
 
 #endif /* openflow/openflow.h */

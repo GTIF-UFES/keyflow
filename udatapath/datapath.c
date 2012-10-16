@@ -1338,6 +1338,17 @@ recv_port_mod(struct datapath *dp, const struct sender *sender UNUSED,
 }
 
 static int
+recv_key_mod(struct datapath *dp, const struct sender *sender UNUSED,
+             const void *msg)
+{
+    const struct ofp_key_mod *opm = msg;
+
+    dp->key = opm->key;
+
+    return 0;
+}
+
+static int
 add_flow(struct datapath *dp, const struct sender *sender,
         const struct ofp_flow_mod *ofm)
 {
@@ -1542,6 +1553,17 @@ desc_stats_dump(struct datapath *dp UNUSED, void *state UNUSED,
     strncpy(ods->sw_desc, &sw_desc, sizeof ods->sw_desc);
     strncpy(ods->dp_desc, dp->dp_desc, sizeof ods->dp_desc);
     strncpy(ods->serial_num, &serial_num, sizeof ods->serial_num);
+
+    return 0;
+}
+
+static int
+key_stats_dump(struct datapath *dp UNUSED, void *state UNUSED,
+               struct ofpbuf *buffer)
+{
+    struct ofp_key *ods = ofpbuf_put_uninit(buffer, sizeof *ods);
+
+    ods->key = dp->key;
 
     return 0;
 }
@@ -2033,6 +2055,14 @@ static const struct stats_type stats[] = {
         vendor_stats_dump,
         vendor_stats_done
     },
+    {
+        OFPST_KEY,
+        0,
+        0,
+        NULL,
+        key_stats_dump,
+        NULL
+    },
 };
 
 struct stats_dump_cb {
@@ -2293,6 +2323,10 @@ fwd_control_input(struct datapath *dp, const struct sender *sender,
     case OFPT_VENDOR:
         min_size = sizeof(struct ofp_vendor_header);
         handler = recv_vendor;
+        break;
+    case OFPT_KEY_MOD:
+        min_size = sizeof(struct ofp_key_mod);
+        handler = recv_key_mod;
         break;
     default:
         dp_send_error_msg(dp, sender, OFPET_BAD_REQUEST, OFPBRC_BAD_TYPE,

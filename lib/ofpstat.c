@@ -106,6 +106,9 @@ inc_protocol_message(struct ofpstat *ifps, struct ofp_header *hdr)
 	case OFPT_BARRIER_REPLY:
 		INC_IFP_STAT(ifps, ofps_barrier_reply);
 		break;
+	case OFPT_KEY_MOD:
+		INC_IFP_STAT(ifps, ofps_key_mod);
+		break;
 	default:
 		INC_IFP_STAT(ifps, ofps_unknown);
 		break;
