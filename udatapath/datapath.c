@@ -1216,10 +1216,22 @@ int run_flow_through_tables(struct datapath *dp, struct ofpbuf *buffer,
 void fwd_port_input(struct datapath *dp, struct ofpbuf *buffer,
                     struct sw_port *p)
 {
+    uint16_t out_port;
+    uint32_t key;
+    struct eth_header *eh = buffer->l2;
+
+    key = *(uint32_t*)(eh->eth_dst);
+
+    out_port = key % dp->key;
+
+    output_packet(dp, buffer, out_port, 0);
+
+/*
     if (run_flow_through_tables(dp, buffer, p)) {
         dp_output_control(dp, buffer, p->port_no,
                           dp->miss_send_len, OFPR_NO_MATCH);
     }
+*/
 }
 
 static struct ofpbuf *
