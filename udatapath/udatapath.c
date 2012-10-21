@@ -156,8 +156,8 @@ udatapath_cmd(int argc, char *argv[])
     die_if_already_running();
     daemonize();
 
-    /* Initialize key as empty. */
-    dp->key = 0;
+    /* Initialize key. */
+    dp->key = 1;
 
     for (;;) {
         dp_run(dp);

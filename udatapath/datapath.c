@@ -1218,7 +1218,7 @@ void fwd_port_input(struct datapath *dp, struct ofpbuf *buffer,
 {
     uint16_t out_port;
     uint32_t key;
-    struct eth_header *eh = buffer->l2;
+    struct eth_header *eh = buffer->data;
 
     key = *(uint32_t*)(eh->eth_dst);
 
