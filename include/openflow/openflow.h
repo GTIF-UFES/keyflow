@@ -703,11 +703,6 @@ enum ofp_stats_types {
      * The reply body is struct ofp_desc_stats. */
     OFPST_DESC,
 
-    /* Switch Key
-     * The request body is empty.
-     * The reply body is struct ofp_key. */
-    OFPST_KEY,
-
     /* Individual flow statistics.
      * The request body is struct ofp_flow_stats_request.
      * The reply body is an array of struct ofp_flow_stats. */
@@ -732,6 +727,11 @@ enum ofp_stats_types {
      * The request body defines the port
      * The reply body is an array of struct ofp_queue_stats */
     OFPST_QUEUE,
+
+    /* Switch Key
+     * The request body is empty.
+     * The reply body is struct ofp_key. */
+    OFPST_KEY,
 
     /* Vendor extension.
      * The request and reply bodies begin with a 32-bit vendor ID, which takes
