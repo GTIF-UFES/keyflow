@@ -157,7 +157,7 @@ udatapath_cmd(int argc, char *argv[])
     daemonize();
 
     /* Initialize key. */
-    dp->key = 1;
+    dp->key = 0;
 
     for (;;) {
         dp_run(dp);
