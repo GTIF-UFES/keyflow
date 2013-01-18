@@ -1222,8 +1222,14 @@ void fwd_port_input(struct datapath *dp, struct ofpbuf *buffer,
                               dp->miss_send_len, OFPR_NO_MATCH);
         }
     } else {
+/* MAC */
+        struct eth_header *eh = buffer->data;
+		output_packet(dp, buffer, (*(uint32_t*)(eh->eth_dst)) % dp->key, 0);
+
+/* VLAN
         struct vlan_eth_header *veh = buffer->data;
         output_packet(dp, buffer, veh->veth_tci % dp->key, 0);
+*/
     }
 }
 
